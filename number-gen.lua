@@ -1,5 +1,3 @@
--- Script for a number guessing game in Roblox
-
 local Players = game:GetService("Players")
 local secretNumber = math.random(1, 100)
 local rewardAmount = 100
@@ -13,12 +11,11 @@ local function onPlayerAdded(player)
         if guess then
             if guess == secretNumber then
                 print("You guessed it!")
-                -- Reward the player with 100 dollars
                 player.leaderstats.Cash.Value = player.leaderstats.Cash.Value + rewardAmount
             else
                 print("Wrong! The number was", secretNumber)
             end
-            -- Generate a new secret number for the next guess
+ 
             secretNumber = math.random(1, 100)
         else
             print("Please enter a valid number.")
