@@ -1,26 +1,32 @@
-local Players = game:GetService("Players")
-local secretNumber = math.random(1, 100)
-local rewardAmount = 100
 
-print("Guess a number between 1 and 100:")
-
-local function onPlayerAdded(player)
-    player.Chatted:Connect(function(message)
-        local guess = tonumber(message)
-
-        if guess then
-            if guess == secretNumber then
-                print("You guessed it!")
-                player.leaderstats.Cash.Value = player.leaderstats.Cash.Value + rewardAmount
-            else
-                print("Wrong! The number was", secretNumber)
-            end
- 
-            secretNumber = math.random(1, 100)
+local wins = 0
+local minNumber = 1
+local maxNumber = 100
+local targetNumber = math.random(minNumber, 
+local function handleGuess(input)
+    local playerGuess = tonumber(input)
+    if playerGuess then
+        if playerGuess == targetNumber then
+            wins = wins + 1
+            print("Correct! You have " .. wins .. " wins.")
+       
+            targetNumber = math.random(minNumber, maxNumber)
         else
-            print("Please enter a valid number.")
+            print("Wrong! The correct number was " .. targetNumber)
+  
+            targetNumber = math.random(minNumber, maxNumber)
         end
-    end)
+    else
+        print("Please enter a valid number.")
+    end
 end
 
-Players.PlayerAdded:Connect(onPlayerAdded)
+script.Parent.MouseButton1Click:Connect(function()
+    local playerInput = script.Parent.Parent:FindFirstChild("TextBox").Text
+    handleGuess(playerInput)
+end)
+
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(0, 200, 0, 50)
+textBox.Position = UDim2.new(0.5, -100, 0.5, -25)
+textBox.Parent = script.Parent.Parent
