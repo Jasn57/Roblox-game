@@ -1,27 +1,43 @@
-local gun = script.Parent
-local bulletSpeed = 100
-local damage = 25
+local tool = script.Parent 
+local player = game.Players.LocalPlayer 
+local mouse = player:GetMouse() 
+local shooting = false  
+local damage = 20 
+local cooldown = 0.5 
 
-local function onActivated()
-    local player = game.Players:GetPlayerFromCharacter(gun.Parent)
-    local mouse = player:GetMouse()
+local function fireBullet()
+    if shooting then
+        return 
+    end
+    
+    shooting = true
     
     local bullet = Instance.new("Part")
-    bullet.Size = Vector3.new(0.2, 0.2, 0.2)
+    bullet.Size = Vector3.new(0.2, 0.2, 2) 
     bullet.Shape = Enum.PartType.Ball
-    bullet.Material = Enum.Material.Neon
-    bullet.BrickColor = BrickColor.new("Bright yellow")
-    bullet.CFrame = gun.CFrame
-    bullet.Velocity = (mouse.Hit.p - gun.Position).unit * bulletSpeed
-    bullet.CanCollide = false
-    bullet.Parent = workspace
+    bullet.Color = Color3.fromRGB(255, 0, 0) 
+    bullet.Anchored = false
+    bullet.CanCollide = true
+    bullet.Position = tool.Handle.Position + tool.Handle.CFrame.LookVector
+    
+    bullet.Parent = game.Workspace
+
+    local velocity = (mouse.Hit.p - bullet.Position).unit * 100 
+    bullet.Velocity = velocity
     
     bullet.Touched:Connect(function(hit)
+        
         if hit.Parent:FindFirstChild("Humanoid") then
-            hit.Parent.Humanoid:TakeDamage(damage)
-            bullet:Destroy()
+            local humanoid = hit.Parent:FindFirstChild("Humanoid")
+            if humanoid then
+                humanoid:TakeDamage(damage) 
+            end
         end
+        bullet:Destroy()
     end)
+
+    wait(cooldown)
+    shooting = false
 end
 
-gun.Activated:Connect(onActivated)
+tool.Activated:Connect(fireBullet)
